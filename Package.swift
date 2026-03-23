@@ -11,7 +11,7 @@ let package = Package(
         .binaryTarget(
             name: "VerityFFI",
             url: "https://github.com/ashpect/verity/releases/download/v0.1.0/Verity.xcframework.zip",
-            checksum: "bbf39ee9cc4f391026cd96e63144287bb37f4b33dd054447464cfccb170bc38d"
+            checksum: "a259f8ca5295942b7b167772b38efea1f0104dfc5c1fe5e7336178190b089c0c"
         ),
         .target(
             name: "Verity",
