@@ -1,0 +1,10 @@
+Verity.xcframework/
+ProveKit.xcframework/
+.build/
+DerivedData/
+output/
+*.o
+.DS_Store
+.swiftpm/
+*.xcuserstate
+Examples/BasicProof/BasicProof.xcodeproj/
