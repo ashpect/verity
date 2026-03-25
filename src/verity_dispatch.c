@@ -24,15 +24,10 @@ int verity_init(void) {
 
 int verity_prepare(VerityBackend backend, const char *circuit_path, const char *output_dir) {
     switch (backend) {
-        case VERITY_BACKEND_PROVEKIT: {
-            /* pk_prepare(program, pkp_out, pkv_out, hash)
-               Convention: output_dir will contain prover.pkp + verifier.pkv */
-            char pkp_path[4096];
-            char pkv_path[4096];
-            snprintf(pkp_path, sizeof(pkp_path), "%s/prover.pkp", output_dir);
-            snprintf(pkv_path, sizeof(pkv_path), "%s/verifier.pkv", output_dir);
-            return pk_prepare(circuit_path, pkp_path, pkv_path, NULL);
-        }
+        case VERITY_BACKEND_PROVEKIT:
+            /* ProveKit uses pre-compiled .pkp/.pkv files.
+               The caller must place prover.pkp + verifier.pkv in output_dir. */
+            return VERITY_SUCCESS;
         case VERITY_BACKEND_BARRETENBERG:
             return bb_prepare(circuit_path, output_dir);
         default:
