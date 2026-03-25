@@ -14,57 +14,87 @@ final class VerityTests: XCTestCase {
         return url.path
     }
 
-    private func tempSchemeDir(_ name: String) -> String {
-        let dir = NSTemporaryDirectory() + "verity_test_\(name)"
-        try? FileManager.default.removeItem(atPath: dir)
-        return dir
-    }
+    // MARK: - ProveKit
 
-    func testProveKitBackendPrepareProveVerify() throws {
+    func testProveKitPrepareProveVerify() throws {
         let verity = try Verity(backend: .provekit)
-        let schemeDir = tempSchemeDir("provekit")
 
-        defer { try? FileManager.default.removeItem(atPath: schemeDir) }
-
-        try verity.prepare(
-            circuit: fixturePath("circuit.json"),
-            output: schemeDir
-        )
+        let scheme = try verity.prepare(circuit: fixturePath("circuit.json"))
 
         let proof = try verity.prove(
-            scheme: schemeDir,
+            with: scheme.prover,
             input: fixturePath("Prover.toml")
         )
         XCTAssertFalse(proof.isEmpty, "Proof should not be empty")
 
-        let valid = try verity.verify(
-            proof: proof,
-            scheme: schemeDir
-        )
+        let valid = try verity.verify(with: scheme.verifier, proof: proof)
         XCTAssertTrue(valid, "ProveKit proof should verify")
     }
 
-    func testBarretenbergBackendPrepareProveVerify() throws {
+    func testProveKitSchemeReuse() throws {
+        let verity = try Verity(backend: .provekit)
+        let scheme = try verity.prepare(circuit: fixturePath("circuit.json"))
+
+        let proof1 = try verity.prove(with: scheme.prover, input: fixturePath("Prover.toml"))
+        let proof2 = try verity.prove(with: scheme.prover, input: fixturePath("Prover.toml"))
+
+        XCTAssertTrue(try verity.verify(with: scheme.verifier, proof: proof1))
+        XCTAssertTrue(try verity.verify(with: scheme.verifier, proof: proof2))
+    }
+
+    func testProveKitSaveLoadRoundTrip() throws {
+        let verity = try Verity(backend: .provekit)
+        let scheme = try verity.prepare(circuit: fixturePath("circuit.json"))
+
+        let tmpDir = NSTemporaryDirectory() + "verity_test_save"
+        try FileManager.default.createDirectory(atPath: tmpDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(atPath: tmpDir) }
+
+        let proverPath = tmpDir + "/prover.pkp"
+        let verifierPath = tmpDir + "/verifier.pkv"
+        try scheme.prover.save(to: proverPath)
+        try scheme.verifier.save(to: verifierPath)
+
+        let loadedProver = try verity.loadProver(from: proverPath)
+        let loadedVerifier = try verity.loadVerifier(from: verifierPath)
+
+        let proof = try verity.prove(with: loadedProver, input: fixturePath("Prover.toml"))
+        let valid = try verity.verify(with: loadedVerifier, proof: proof)
+        XCTAssertTrue(valid, "Loaded scheme should prove and verify")
+    }
+
+    func testProveKitSerializeBytesRoundTrip() throws {
+        let verity = try Verity(backend: .provekit)
+        let scheme = try verity.prepare(circuit: fixturePath("circuit.json"))
+
+        let proverBytes = try scheme.prover.serialize()
+        let verifierBytes = try scheme.verifier.serialize()
+
+        XCTAssertFalse(proverBytes.isEmpty)
+        XCTAssertFalse(verifierBytes.isEmpty)
+
+        let restoredProver = try verity.loadProver(data: proverBytes)
+        let restoredVerifier = try verity.loadVerifier(data: verifierBytes)
+
+        let proof = try verity.prove(with: restoredProver, input: fixturePath("Prover.toml"))
+        let valid = try verity.verify(with: restoredVerifier, proof: proof)
+        XCTAssertTrue(valid, "Bytes round-trip should prove and verify")
+    }
+
+    // MARK: - Barretenberg
+
+    func testBarretenbergPrepareProveVerify() throws {
         let verity = try Verity(backend: .barretenberg)
-        let schemeDir = tempSchemeDir("barretenberg")
 
-        defer { try? FileManager.default.removeItem(atPath: schemeDir) }
-
-        try verity.prepare(
-            circuit: fixturePath("circuit.json"),
-            output: schemeDir
-        )
+        let scheme = try verity.prepare(circuit: fixturePath("circuit.json"))
 
         let proof = try verity.prove(
-            scheme: schemeDir,
+            with: scheme.prover,
             input: fixturePath("Prover.toml")
         )
         XCTAssertFalse(proof.isEmpty, "Proof should not be empty")
 
-        let valid = try verity.verify(
-            proof: proof,
-            scheme: schemeDir
-        )
+        let valid = try verity.verify(with: scheme.verifier, proof: proof)
         XCTAssertTrue(valid, "Barretenberg proof should verify")
     }
 }

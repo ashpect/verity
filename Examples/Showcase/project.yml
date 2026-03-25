@@ -1,4 +1,4 @@
-name: BasicProof
+name: Showcase
 options:
   bundleIdPrefix: com.example
   deploymentTarget:
@@ -10,15 +10,15 @@ packages:
     path: ../..
 
 targets:
-  BasicProof:
+  Showcase:
     type: application
     platform: iOS
     sources:
-      - BasicProof
+      - Showcase
     dependencies:
       - package: Verity
     settings:
-      PRODUCT_BUNDLE_IDENTIFIER: com.example.basicproof
+      PRODUCT_BUNDLE_IDENTIFIER: com.example.showcase
       GENERATE_INFOPLIST_FILE: true
       INFOPLIST_KEY_UIApplicationSceneManifest_Generation: true
       INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: true

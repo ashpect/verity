@@ -8,16 +8,29 @@ let package = Package(
         .library(name: "Verity", targets: ["Verity"]),
     ],
     targets: [
+        // Pre-built static library containing pk_* and bb_* symbols.
+        // For local dev: use path. For release: switch to url + checksum.
         .binaryTarget(
             name: "VerityFFI",
-            url: "https://github.com/ashpect/verity/releases/download/v0.1.0/Verity.xcframework.zip",
-            checksum: "a259f8ca5295942b7b167772b38efea1f0104dfc5c1fe5e7336178190b089c0c"
+            path: "output/Verity.xcframework"
         ),
+
+        // C dispatcher — routes unified verity_* calls to the correct backend
+        // via vtable. Contains pk_backend.c and bb_backend.c registrations.
+        .target(
+            name: "VerityDispatch",
+            dependencies: ["VerityFFI"],
+            path: "Sources/VerityDispatch",
+            publicHeadersPath: "include"
+        ),
+
+        // Swift SDK — calls verity_* functions only (no backend-specific code).
         .target(
             name: "Verity",
-            dependencies: ["VerityFFI"],
+            dependencies: ["VerityDispatch"],
             path: "Sources/Verity"
         ),
+
         .testTarget(
             name: "VerityTests",
             dependencies: ["Verity"],
