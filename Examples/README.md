@@ -32,6 +32,14 @@ open Showcase.xcodeproj
 ```
 
 > **Note:** Each example has its own `project.yml` and must be generated separately. Run `xcodegen generate` and `open *.xcodeproj` from within the example's directory.
+> Also, showcase uses the release package :
+```
+packages:
+  Verity:
+    url: https://github.com/ashpect/verity
+    from: 0.2.0
+```
+while basicproof normal one.
 
 ## Updating fixtures
 

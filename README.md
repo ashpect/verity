@@ -67,4 +67,5 @@ See [`Examples/`](Examples/) for SwiftUI demo apps.
 ## Docs
 
 - [Building & Testing](docs/building.md) — for SDK maintainers
+- [Releasing](docs/release.md) — cutting a new version
 - [Contributing](CONTRIBUTING.md) — adding new backends

@@ -7,7 +7,8 @@ options:
 
 packages:
   Verity:
-    path: ../..
+    url: https://github.com/ashpect/verity
+    from: 0.2.0
 
 targets:
   Showcase:
