@@ -29,7 +29,7 @@ bash scripts/build-xcframework.sh <provekit-path> <zk-ffi-path>
 bash scripts/build-xcframework.sh ../provekit ../zk-ffi
 ```
 
-Compiles provekit-ffi + all zk-ffi backends for iOS device + simulator, merges into `output/Verity.xcframework`. Takes ~7 minutes first time.
+Compiles provekit-ffi + all zk-ffi backends for iOS device + simulator, merges into `output/Verity.xcframework`.
 
 ## Run tests
 
@@ -44,13 +44,23 @@ Note: `swift test` won't work as the xcframework only has iOS slices. Must use `
 
 ## Run examples
 
+`circuit.json` and `Prover.toml` are already included in each example directory. Just generate and run:
+
 ```bash
-cd Examples/BasicProof
+cd Examples/Showcase
 xcodegen generate          # needs: brew install xcodegen
-open BasicProof.xcodeproj
+open Showcase.xcodeproj
+# Select an iOS Simulator and Run
 ```
 
-Add `circuit.json` + `Prover.toml` to bundle resources in Xcode, then Run.
+If the fixtures are missing for some reason, recompile from the reference circuit:
+
+```bash
+cd noir-examples/basic-2
+nargo compile
+cp target/basic.json ../../Examples/Showcase/Showcase/circuit.json
+cp Prover.toml ../../Examples/Showcase/Showcase/Prover.toml
+```
 
 ## Release
 
@@ -73,7 +83,7 @@ Then update `Package.swift` (switch `path:` to `url:` + `checksum:`), commit, pu
 // Local dev (needs build-xcframework.sh first):
 .binaryTarget(name: "VerityFFI", path: "output/Verity.xcframework")
 
-// Release (what users see — SPM downloads automatically):
+// Release
 .binaryTarget(name: "VerityFFI", url: "https://...", checksum: "...")
 ```
 
