@@ -50,6 +50,26 @@ cargo build --release --target aarch64-apple-ios-sim
 
 popd > /dev/null
 
+# --- Compile dispatch layer ---
+echo ""
+echo "Compiling verity_dispatch.c..."
+
+DISPATCH_DIR=$(mktemp -d)
+
+xcrun --sdk iphoneos clang -c -target arm64-apple-ios15 \
+    -I"$SDK_DIR/include" \
+    "$SDK_DIR/src/verity_dispatch.c" \
+    -o "$DISPATCH_DIR/verity_dispatch_ios.o"
+
+xcrun --sdk iphonesimulator clang -c -target arm64-apple-ios15-simulator \
+    -I"$SDK_DIR/include" \
+    "$SDK_DIR/src/verity_dispatch.c" \
+    -o "$DISPATCH_DIR/verity_dispatch_sim.o"
+
+# Create static libs from dispatch objects
+ar rcs "$DISPATCH_DIR/libverity_dispatch_ios.a" "$DISPATCH_DIR/verity_dispatch_ios.o"
+ar rcs "$DISPATCH_DIR/libverity_dispatch_sim.a" "$DISPATCH_DIR/verity_dispatch_sim.o"
+
 # --- Merge static libs ---
 echo ""
 echo "Merging static libraries..."
@@ -59,11 +79,13 @@ mkdir -p "$MERGED_DIR/ios-arm64" "$MERGED_DIR/ios-arm64-sim"
 
 libtool -static -o "$MERGED_DIR/ios-arm64/libverity.a" \
     "$PROVEKIT_ROOT/target/aarch64-apple-ios/release/libprovekit_ffi.a" \
-    "$BB_FFI_DIR/target/aarch64-apple-ios/release/libbarretenberg_ffi.a"
+    "$BB_FFI_DIR/target/aarch64-apple-ios/release/libbarretenberg_ffi.a" \
+    "$DISPATCH_DIR/libverity_dispatch_ios.a"
 
 libtool -static -o "$MERGED_DIR/ios-arm64-sim/libverity.a" \
     "$PROVEKIT_ROOT/target/aarch64-apple-ios-sim/release/libprovekit_ffi.a" \
-    "$BB_FFI_DIR/target/aarch64-apple-ios-sim/release/libbarretenberg_ffi.a"
+    "$BB_FFI_DIR/target/aarch64-apple-ios-sim/release/libbarretenberg_ffi.a" \
+    "$DISPATCH_DIR/libverity_dispatch_sim.a"
 
 # --- Create headers + modulemap ---
 HEADERS_DIR=$(mktemp -d)
@@ -90,7 +112,7 @@ xcodebuild -create-xcframework \
     -output "$OUTPUT_DIR/Verity.xcframework"
 
 # Clean up temp dirs
-rm -rf "$HEADERS_DIR" "$MERGED_DIR"
+rm -rf "$HEADERS_DIR" "$MERGED_DIR" "$DISPATCH_DIR"
 
 echo ""
 echo "=== Done! ==="
