@@ -16,7 +16,7 @@ fi
 
 if [ ! -d "$XCFW" ]; then
     echo "ERROR: xcframework not found at $XCFW"
-    echo "Run 'bash scripts/build-xcframework.sh' first."
+    echo "Run 'bash scripts/build-xcframework.sh <provekit-path> <zk-ffi-path>' first."
     exit 1
 fi
 
@@ -38,7 +38,7 @@ echo ""
 echo "Creating GitHub release $VERSION..."
 gh release create "$VERSION" "$ZIP" \
     --title "$VERSION" \
-    --notes "Pre-built Verity xcframework (ProveKit + Barretenberg)"
+    --notes "Pre-built Verity xcframework with all backends"
 
 # Show what to update
 REPO_URL=$(cd "$SDK_DIR" && gh repo view --json url -q .url 2>/dev/null || echo "https://github.com/ashpect/verity")

@@ -14,6 +14,10 @@ public enum VerityError: LocalizedError {
     case verificationFailed
     /// Serialization error.
     case serializationError
+    /// Circuit compilation failed.
+    case compilationFailed(String)
+    /// Unknown or unregistered backend.
+    case unknownBackend
     /// Unknown FFI error with raw code.
     case ffiError(code: Int32)
 
@@ -31,6 +35,10 @@ public enum VerityError: LocalizedError {
             return "Proof verification failed"
         case .serializationError:
             return "Serialization error"
+        case .compilationFailed(let msg):
+            return "Compilation failed: \(msg)"
+        case .unknownBackend:
+            return "Unknown or unregistered backend"
         case .ffiError(let code):
             return "FFI error code: \(code)"
         }
@@ -46,6 +54,8 @@ public enum VerityError: LocalizedError {
         case 5: return .serializationError
         case 6: return .invalidInput("UTF-8 error")
         case 7: return .invalidInput("file write error")
+        case 8: return .compilationFailed("circuit compilation error")
+        case 9: return .unknownBackend
         default: return .ffiError(code: code)
         }
     }
