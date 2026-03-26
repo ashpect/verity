@@ -2,28 +2,28 @@
 set -euo pipefail
 
 # Usage:
-#   bash scripts/build-xcframework.sh <provekit-path> <zk-ffi-path>
-#   bash scripts/build-xcframework.sh ../provekit ../zk-ffi
+#   bash scripts/build-xcframework.sh <provekit-path>
+#   bash scripts/build-xcframework.sh ../provekit
 #
-# Both arguments are required.
+# The zk-ffi backends are now bundled in the zkffi/ directory of this repo.
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SDK_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 OUTPUT_DIR="$SDK_DIR/output"
+ZK_FFI_DIR="$SDK_DIR/zkffi"
 
 IOS_DEVICE="aarch64-apple-ios"
 IOS_SIM="aarch64-apple-ios-sim"
 
-if [ $# -lt 2 ]; then
-    echo "Usage: bash scripts/build-xcframework.sh <provekit-path> <zk-ffi-path>"
+if [ $# -lt 1 ]; then
+    echo "Usage: bash scripts/build-xcframework.sh <provekit-path>"
     echo ""
     echo "Example:"
-    echo "  bash scripts/build-xcframework.sh ../provekit ../zk-ffi"
+    echo "  bash scripts/build-xcframework.sh ../provekit"
     exit 1
 fi
 
 PROVEKIT_ROOT="$(cd "$1" && pwd)"
-ZK_FFI_DIR="$(cd "$2" && pwd)"
 
 if [ ! -f "$PROVEKIT_ROOT/Cargo.toml" ]; then
     echo "ERROR: Cannot find provekit repo at $PROVEKIT_ROOT"
@@ -31,14 +31,14 @@ if [ ! -f "$PROVEKIT_ROOT/Cargo.toml" ]; then
 fi
 
 if [ ! -f "$ZK_FFI_DIR/Cargo.toml" ]; then
-    echo "ERROR: Cannot find zk-ffi repo at $ZK_FFI_DIR"
+    echo "ERROR: Cannot find zkffi workspace at $ZK_FFI_DIR"
     exit 1
 fi
 
 echo "=== Building Verity xcframework ==="
 echo "SDK dir:       $SDK_DIR"
 echo "ProveKit root: $PROVEKIT_ROOT"
-echo "zk-ffi dir:    $ZK_FFI_DIR"
+echo "zkffi dir:     $ZK_FFI_DIR"
 echo ""
 
 rustup target add "$IOS_DEVICE" "$IOS_SIM" 2>/dev/null || true
@@ -55,8 +55,8 @@ cargo build --release --target "$IOS_SIM" -p provekit-ffi
 popd > /dev/null
 
 # --- Build all zk-ffi backends ---
-# Each backend in the zk-ffi workspace is built and merged into the
-# xcframework. To add a new backend, just add its crate to the zk-ffi
+# Each backend in the zkffi workspace is built and merged into the
+# xcframework. To add a new backend, just add its crate to the zkffi
 # workspace — it will be picked up automatically.
 pushd "$ZK_FFI_DIR" > /dev/null
 

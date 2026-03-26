@@ -8,28 +8,20 @@ For SDK maintainers. iOS developers don't need any of this — SPM downloads the
 |-------------|---------|
 | Rust nightly + iOS targets | `rustup target add aarch64-apple-ios aarch64-apple-ios-sim` |
 | Xcode 16+ | Mac App Store |
-| provekit repo | Pass path as first argument to build script |
-| zk-ffi repo | Pass path as second argument to build script |
+| provekit repo | Pass path as argument to build script |
 
-Expected directory layout:
-
-```
-~/Desktop/zk/
-├── provekit/    ProveKit core + pk_* FFI
-├── zk-ffi/      Backend FFI crates (bb_*, etc.)
-└── sdk/          This repo
-```
+The zk-ffi backends are bundled in the `zkffi/` directory of this repo.
 
 ## Build xcframework
 
 ```bash
-bash scripts/build-xcframework.sh <provekit-path> <zk-ffi-path>
+bash scripts/build-xcframework.sh <provekit-path>
 
 # Example:
-bash scripts/build-xcframework.sh ../provekit ../zk-ffi
+bash scripts/build-xcframework.sh ../provekit
 ```
 
-Compiles provekit-ffi + all zk-ffi backends for iOS device + simulator, merges into `output/Verity.xcframework`.
+Compiles provekit-ffi + all zkffi backends for iOS device + simulator, merges into `output/Verity.xcframework`.
 
 ## Run tests
 
@@ -97,6 +89,6 @@ No xcframework rebuild needed. Just commit and push.
 |---------|-----|
 | `swift test` linker errors | Use `xcodebuild test` with simulator destination instead |
 | Build script can't find provekit | Check the first argument path is correct |
-| Build script can't find zk-ffi | Check the second argument path is correct |
+| Build script can't find zkffi | Check that `zkffi/Cargo.toml` exists in the repo root |
 | Tests fail with fixture not found | Check `Tests/VerityTests/Fixtures/` has `circuit.json` + `Prover.toml` |
 | Checksum mismatch after release | Re-run `swift package compute-checksum` on the exact zip uploaded |

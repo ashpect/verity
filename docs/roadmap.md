@@ -7,3 +7,4 @@
 6. js sdk
 7. halo2 support ? : ask another dev to see how much easy to contribute
 8. release trigger  
+9. protobuf for inter language error prevention
