@@ -28,7 +28,7 @@ xcodebuild test \
 ### 3. Release
 
 ```bash
-bash scripts/release.sh v0.2.0
+bash scripts/release.sh v0.1.0
 ```
 
 This will:
@@ -45,7 +45,7 @@ Update Package.swift with:
 
   .binaryTarget(
       name: "VerityFFI",
-      url: "https://github.com/ashpect/verity/releases/download/v0.2.0/Verity.xcframework.zip",
+      url: "https://github.com/atheonxyz/verity/releases/download/v0.1.0/Verity.xcframework.zip",
       checksum: "a259f8ca..."
   )
 ```
@@ -61,7 +61,7 @@ Replace the local path with the release URL:
 // After (release):
 .binaryTarget(
     name: "VerityFFI",
-    url: "https://github.com/ashpect/verity/releases/download/v0.2.0/Verity.xcframework.zip",
+    url: "https://github.com/atheonxyz/verity/releases/download/v0.1.0/Verity.xcframework.zip",
     checksum: "a259f8ca..."
 )
 ```
@@ -84,7 +84,7 @@ git push origin main --tags
 ```swift
 // Package.swift
 dependencies: [
-    .package(url: "https://github.com/ashpect/verity", from: "0.2.0")
+    .package(url: "https://github.com/atheonxyz/verity", from: "0.1.0")
 ]
 ```
 
@@ -123,8 +123,8 @@ Change `project.yml` to:
 ```yaml
 packages:
   Verity:
-    url: https://github.com/ashpect/verity
-    from: 0.2.0
+    url: https://github.com/atheonxyz/verity
+    from: 0.1.0
 ```
 
 Then `xcodegen generate` and the example will pull the released SDK via SPM.

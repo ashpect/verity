@@ -7,7 +7,7 @@ Zero-knowledge proof SDK for iOS. Supports multiple proving backends with a sing
 ```swift
 // Package.swift
 dependencies: [
-    .package(url: "https://github.com/ashpect/verity", from: "0.2.0")
+    .package(url: "https://github.com/atheonxyz/verity", from: "0.2.0")
 ],
 targets: [
     .target(name: "MyApp", dependencies: [

@@ -36,8 +36,8 @@ open Showcase.xcodeproj
 ```
 packages:
   Verity:
-    url: https://github.com/ashpect/verity
-    from: 0.2.0
+    url: https://github.com/atheonxyz/verity
+    from: 0.1.0
 ```
 while basicproof normal one.
 

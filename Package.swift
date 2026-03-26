@@ -11,8 +11,8 @@ let package = Package(
         // Pre-built static library containing pk_* and bb_* symbols.
         .binaryTarget(
             name: "VerityFFI",
-            url: "https://github.com/ashpect/verity/releases/download/v0.2.0/Verity.xcframework.zip",
-            checksum: "b173ccde86f33b46c54455b8aa4a8b2d613c9232fa808fa2ae58958066fbb889"
+            url: "https://github.com/atheonxyz/verity/releases/download/v0.1.0/Verity.xcframework.zip",
+            checksum: "ff6fa59c2c9b17bf95b1a7e7768583f4838aa088ebf618c082326a1ccdbcc64b"
         ),
 
         // C dispatcher — routes unified verity_* calls to the correct backend

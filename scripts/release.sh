@@ -41,7 +41,7 @@ gh release create "$VERSION" "$ZIP" \
     --notes "Pre-built Verity xcframework with all backends"
 
 # Show what to update
-REPO_URL=$(cd "$SDK_DIR" && gh repo view --json url -q .url 2>/dev/null || echo "https://github.com/ashpect/verity")
+REPO_URL=$(cd "$SDK_DIR" && gh repo view --json url -q .url 2>/dev/null || echo "https://github.com/atheonxyz/verity")
 DOWNLOAD_URL="$REPO_URL/releases/download/$VERSION/Verity.xcframework.zip"
 
 echo ""
